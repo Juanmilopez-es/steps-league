@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  device_id: MyString
+  count: 1
+  recorded_at: 2026-03-08 00:12:29
+
+two:
+  device_id: MyString
+  count: 1
+  recorded_at: 2026-03-08 00:12:29
