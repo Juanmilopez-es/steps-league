@@ -1,15 +1,12 @@
 #!/bin/bash -e
 
-# Debug: show environment and config
-echo "=== DEBUG: RAILS_ENV = $RAILS_ENV ==="
-echo "=== DEBUG: DATABASE_URL present = $([ -n "$DATABASE_URL" ] && echo 'yes' || echo 'no') ==="
-echo "=== DEBUG: database.yml production section ==="
-grep -A5 "^production:" config/database.yml || echo "production section not found"
-echo "=== END DEBUG ==="
+echo "=== ENTRYPOINT RUNNING ==="
+echo "RAILS_ENV=$RAILS_ENV"
+echo "DATABASE_URL=$(echo $DATABASE_URL | head -c 50)..."
 
-# If running the rails server then create or migrate existing database
-if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  ./bin/rails db:prepare
-fi
+# Skip db:prepare for now - will run manually
+# if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+#   ./bin/rails db:prepare
+# fi
 
 exec "${@}"
