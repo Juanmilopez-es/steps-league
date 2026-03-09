@@ -10,9 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_07_231229) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_09_052714) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "groups", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "group_type", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_type"], name: "index_groups_on_group_type"
+  end
 
   create_table "steps", force: :cascade do |t|
     t.integer "count"
@@ -21,4 +29,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_231229) do
     t.datetime "recorded_at"
     t.datetime "updated_at", null: false
   end
+
+  create_table "user_groups", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "device_id", null: false
+    t.bigint "group_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["device_id", "group_id"], name: "index_user_groups_on_device_id_and_group_id", unique: true
+    t.index ["device_id"], name: "index_user_groups_on_device_id"
+    t.index ["group_id"], name: "index_user_groups_on_group_id"
+  end
+
+  add_foreign_key "user_groups", "groups"
 end

@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  resources :user_groups do
+    collection do
+      delete :leave
+    end
+  end
+  resources :groups
   resources :steps
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
