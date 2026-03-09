@@ -6,9 +6,12 @@ puts "Seeding groups..."
 
 # Personal groups
 personal_groups = [
-  { name: "Familia", group_type: "familia" },
+  { name: "Trabajo", group_type: "trabajo" },
   { name: "Instituto", group_type: "instituto" },
-  { name: "Universidad", group_type: "universidad" }
+  { name: "Universidad", group_type: "universidad" },
+  { name: "Gimnasio", group_type: "gimnasio" },
+  { name: "Club Deportivo", group_type: "club_deportivo" },
+  { name: "Asociación", group_type: "asociacion" }
 ]
 
 personal_groups.each do |group|

@@ -1,5 +1,5 @@
 class Group < ApplicationRecord
-  VALID_TYPES = %w[familia instituto universidad ciudad provincia comunidad_autonoma pais].freeze
+  VALID_TYPES = %w[trabajo instituto universidad gimnasio club_deportivo asociacion ciudad provincia comunidad_autonoma pais].freeze
 
   has_many :user_groups, dependent: :destroy
 
