@@ -4,19 +4,11 @@ echo "=== ENTRYPOINT RUNNING ==="
 echo "RAILS_ENV=$RAILS_ENV"
 echo "DATABASE_URL present: $([ -n "$DATABASE_URL" ] && echo 'yes' || echo 'no')"
 
-# Run db:prepare before starting the server
+# Run db:migrate before starting the server
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   echo "Running db:migrate..."
   ./bin/rails db:migrate
   echo "db:migrate completed"
-
-  echo "Deleting old personal groups..."
-  ./bin/rails runner 'Group.where(group_type: ["familia", "instituto", "universidad"]).destroy_all'
-  echo "Old groups deleted"
-
-  echo "Running db:seed..."
-  ./bin/rails db:seed
-  echo "db:seed completed"
 fi
 
 exec "${@}"
