@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+set -e
+
+echo "=== Pre-Deploy Check ==="
+echo
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+ERRORS=0
+
+# Check 1: database.yml has adapter
+echo -n "1. database.yml tiene adapter: postgresql... "
+if grep -q "adapter: postgresql" config/database.yml; then
+  echo -e "${GREEN}OK${NC}"
+else
+  echo -e "${RED}FAIL${NC}"
+  ERRORS=$((ERRORS + 1))
+fi
+
+# Check 2: database.yml production inherits from default
+echo -n "2. production hereda de default... "
+if grep -A1 "^production:" config/database.yml | grep -q "<<: \*default"; then
+  echo -e "${GREEN}OK${NC}"
+else
+  echo -e "${RED}FAIL${NC}"
+  ERRORS=$((ERRORS + 1))
+fi
+
+# Check 3: pg gem in Gemfile
+echo -n "3. gem 'pg' en Gemfile... "
+if grep -qE 'gem ["\x27]pg["\x27]' Gemfile; then
+  echo -e "${GREEN}OK${NC}"
+else
+  echo -e "${RED}FAIL${NC}"
+  ERRORS=$((ERRORS + 1))
+fi
+
+# Check 4: No sqlite3 gem active
+echo -n "4. No sqlite3 activo en producción... "
+if grep -qE '^[^#]*gem ["\x27]sqlite3["\x27]' Gemfile 2>/dev/null; then
+  echo -e "${RED}FAIL - sqlite3 encontrado${NC}"
+  ERRORS=$((ERRORS + 1))
+else
+  echo -e "${GREEN}OK${NC}"
+fi
+
+# Check 5: nixpacks.toml or Procfile exists
+echo -n "5. nixpacks.toml o Procfile existe... "
+if [[ -f nixpacks.toml ]] || [[ -f Procfile ]]; then
+  echo -e "${GREEN}OK${NC}"
+else
+  echo -e "${RED}FAIL${NC}"
+  ERRORS=$((ERRORS + 1))
+fi
+
+# Check 6: master.key exists (for local reference)
+echo -n "6. config/master.key existe... "
+if [[ -f config/master.key ]]; then
+  echo -e "${GREEN}OK${NC}"
+else
+  echo -e "${RED}FAIL - necesario para RAILS_MASTER_KEY${NC}"
+  ERRORS=$((ERRORS + 1))
+fi
+
+# Check 7: production.rb doesn't use solid_queue with database
+echo -n "7. production.rb no usa solid_queue con DB... "
+if grep -q "solid_queue.connects_to" config/environments/production.rb; then
+  echo -e "${RED}FAIL - solid_queue configurado con DB${NC}"
+  ERRORS=$((ERRORS + 1))
+else
+  echo -e "${GREEN}OK${NC}"
+fi
+
+# Check 8: Rails config loads correctly
+echo -n "8. Rails config carga correctamente... "
+if bundle exec rails runner "puts 'OK'" 2>/dev/null; then
+  echo -e "${GREEN}OK${NC}"
+else
+  echo -e "${RED}FAIL${NC}"
+  ERRORS=$((ERRORS + 1))
+fi
+
+echo
+if [[ $ERRORS -eq 0 ]]; then
+  echo -e "${GREEN}=== Todas las verificaciones pasaron ===${NC}"
+  echo "Listo para deploy."
+  exit 0
+else
+  echo -e "${RED}=== $ERRORS errores encontrados ===${NC}"
+  echo "Corrige los errores antes de hacer deploy."
+  exit 1
+fi

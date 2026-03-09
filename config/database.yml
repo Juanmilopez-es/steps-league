@@ -1,3 +1,9 @@
+# Configuración de base de datos para Rails + PostgreSQL
+# Compatible con Railway, Heroku, Render y cualquier PaaS que use DATABASE_URL
+#
+# IMPORTANTE: No modificar la estructura de production.
+# Si necesitas múltiples bases de datos, consulta DEPLOYMENT.md
+
 default: &default
   adapter: postgresql
   encoding: unicode
