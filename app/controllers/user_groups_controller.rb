@@ -22,6 +22,15 @@ class UserGroupsController < ApplicationController
   def create
     @user_group = UserGroup.new(user_group_params)
 
+    # Remove existing membership of the same group_type for this device
+    new_group = Group.find_by(id: @user_group.group_id)
+    if new_group
+      existing_memberships = UserGroup.joins(:group)
+                                       .where(device_id: @user_group.device_id)
+                                       .where(groups: { group_type: new_group.group_type })
+      existing_memberships.destroy_all
+    end
+
     if @user_group.save
       render json: @user_group, include: :group, status: :created, location: @user_group
     else
