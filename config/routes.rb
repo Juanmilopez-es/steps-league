@@ -4,7 +4,11 @@ Rails.application.routes.draw do
       delete :leave
     end
   end
-  resources :groups
+  resources :groups do
+    member do
+      get :ranking
+    end
+  end
   resources :steps
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
