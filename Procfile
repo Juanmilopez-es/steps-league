@@ -1,4 +1,2 @@
-# Procfile para Railway/Heroku/Render
-# El proceso web ejecuta migraciones antes de iniciar el servidor
-
-web: bundle exec rails db:prepare && bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}
+web: bundle exec rails server -p $PORT -e production
+release: bundle exec rails db:migrate
