@@ -9,6 +9,9 @@ if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   echo "Running db:migrate..."
   ./bin/rails db:migrate
   echo "db:migrate completed"
+  echo "Running db:seed..."
+  ./bin/rails db:seed
+  echo "db:seed completed"
 fi
 
 exec "${@}"
