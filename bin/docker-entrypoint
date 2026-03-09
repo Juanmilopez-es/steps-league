@@ -6,9 +6,9 @@ echo "DATABASE_URL present: $([ -n "$DATABASE_URL" ] && echo 'yes' || echo 'no')
 
 # Run db:prepare before starting the server
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  echo "Running db:prepare..."
-  ./bin/rails db:prepare
-  echo "db:prepare completed"
+  echo "Running db:migrate..."
+  ./bin/rails db:migrate
+  echo "db:migrate completed"
 fi
 
 exec "${@}"
