@@ -19,18 +19,25 @@ class GroupsController < ApplicationController
   end
 
   # GET /groups/1/ranking
+  # GET /groups/1/ranking?period=alltime
   def ranking
-    today_start = Time.current.beginning_of_day
-    today_end = Time.current.end_of_day
-
     # Get all device_ids in this group
     member_device_ids = UserGroup.where(group_id: @group.id).pluck(:device_id)
 
-    # Get today's steps for each member, summing all records
-    steps_by_device = Step.where(device_id: member_device_ids)
-                          .where(recorded_at: today_start..today_end)
-                          .group(:device_id)
-                          .sum(:count)
+    # Get steps based on period parameter
+    steps_query = Step.where(device_id: member_device_ids)
+
+    if params[:period] == "alltime"
+      # Sum ALL historical steps
+      steps_by_device = steps_query.group(:device_id).sum(:count)
+    else
+      # Sum only today's steps (default)
+      today_start = Time.current.beginning_of_day
+      today_end = Time.current.end_of_day
+      steps_by_device = steps_query.where(recorded_at: today_start..today_end)
+                                   .group(:device_id)
+                                   .sum(:count)
+    end
 
     # Build ranking array
     ranking = member_device_ids.map do |device_id|
