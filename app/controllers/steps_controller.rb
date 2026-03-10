@@ -15,13 +15,20 @@ class StepsController < ApplicationController
 
   # POST /steps
   def create
-    @step = Step.new(step_params)
+    step_data = step_params
 
-    if @step.save
-      render json: @step, status: :created, location: @step
-    else
-      render json: @step.errors, status: :unprocessable_content
-    end
+    # Upsert: one record per device per day
+    Step.upsert(
+      {
+        device_id: step_data[:device_id],
+        count: step_data[:count],
+        recorded_at: Date.today
+      },
+      unique_by: [:device_id, :recorded_at]
+    )
+
+    @step = Step.find_by(device_id: step_data[:device_id], recorded_at: Date.today)
+    render json: @step, status: :ok
   end
 
   # PATCH/PUT /steps/1
